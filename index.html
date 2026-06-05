@@ -83,6 +83,15 @@
             }
         };
 
+        // Nuova funzione per eliminare un singolo numero
+        window.eliminaNumero = (key) => {
+            if (isAdmin) {
+                if (confirm("Sei sicuro di voler eliminare questo numero?")) {
+                    remove(ref(db, 'ruota_manche_v3/' + key));
+                }
+            }
+        };
+
         onValue(ruotaRef, (snapshot) => {
             const container = document.getElementById('feed-estrazioni');
             container.innerHTML = '';
@@ -94,7 +103,8 @@
                             </div>
                             <div class="flex flex-wrap gap-3 mb-12">`;
 
-                Object.values(data).forEach((item) => {
+                // Modificato qui per ottenere anche la "chiave" univoca (key) del database
+                Object.entries(data).forEach(([key, item]) => {
                     if (item.tipo === 'separatore') {
                         html += `</div>
                                  <div class="border-l-4 border-orange-500 pl-4 mb-6 mt-12 text-left">
@@ -103,7 +113,8 @@
                                  <div class="flex flex-wrap gap-3 mb-12">`;
                     } else {
                         const textColor = item.colore === 'bg-white' ? 'text-slate-900' : 'text-white';
-                        html += `<div class="flex items-center justify-center min-w-[3.5rem] h-14 px-3 rounded-xl text-2xl font-black shadow-lg animate-in zoom-in duration-300 ${item.colore} ${textColor}">
+                        // Aggiunto l'evento onclick e il cursore pointer
+                        html += `<div onclick="eliminaNumero('${key}')" class="flex items-center justify-center min-w-[3.5rem] h-14 px-3 rounded-xl text-2xl font-black shadow-lg animate-in zoom-in duration-300 ${item.colore} ${textColor} cursor-pointer hover:opacity-80">
                                     ${item.valore}
                                  </div>`;
                     }
